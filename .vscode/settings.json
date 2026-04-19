@@ -24,6 +24,7 @@
     "napi",
     "nodelib",
     "nolyfill",
+    "oklch",
     "picomatch",
     "postcss",
     "riscv",
@@ -33,6 +34,7 @@
     "turbopack",
     "tybys",
     "unrs",
-    "wasi"
+    "wasi",
+    "xczb"
   ]
 }
