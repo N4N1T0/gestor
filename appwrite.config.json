@@ -1,0 +1,101 @@
+{
+    "projectId": "69e0f4b100091a534550",
+    "projectName": "Gestor",
+    "endpoint": "https://fra.cloud.appwrite.io/v1",
+    "settings": {
+        "services": {
+            "account": true,
+            "avatars": true,
+            "databases": true,
+            "locale": true,
+            "health": true,
+            "storage": true,
+            "teams": true,
+            "users": true,
+            "sites": true,
+            "functions": true,
+            "graphql": true,
+            "messaging": true
+        },
+        "protocols": {
+            "rest": true,
+            "graphql": true,
+            "websocket": true
+        },
+        "auth": {
+            "methods": {
+                "jwt": true,
+                "phone": true,
+                "invites": true,
+                "anonymous": true,
+                "email-otp": true,
+                "magic-url": true,
+                "email-password": true
+            },
+            "security": {
+                "duration": 31536000,
+                "limit": 0,
+                "sessionsLimit": 10,
+                "passwordHistory": 0,
+                "passwordDictionary": false,
+                "personalDataCheck": false,
+                "sessionAlerts": false,
+                "mockNumbers": []
+            }
+        }
+    },
+    "tablesDB": [
+        {
+            "$id": "69e4d5a20031673b27e7",
+            "name": "2026",
+            "enabled": true
+        }
+    ],
+    "tables": [
+        {
+            "$id": "clients",
+            "$permissions": [],
+            "databaseId": "69e4d5a20031673b27e7",
+            "name": "clients",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "name",
+                    "type": "text",
+                    "required": true,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "tax_id",
+                    "type": "varchar",
+                    "required": true,
+                    "array": false,
+                    "size": 255,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "address",
+                    "type": "text",
+                    "required": true,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "email",
+                    "type": "varchar",
+                    "required": false,
+                    "array": false,
+                    "size": 255,
+                    "default": null,
+                    "encrypt": false
+                }
+            ],
+            "indexes": []
+        }
+    ]
+}
