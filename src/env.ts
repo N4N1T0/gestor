@@ -10,7 +10,13 @@ const clientEnv = z.object({
   NEXT_PUBLIC_APPWRITE_ENDPOINT: z.url(),
 })
 
+const commonEnv = z.object({
+  NEXT_APPWRITE_DATABASE_ID: z.string(),
+  NEXT_APPWRITE_CLIENTS_TABLE_ID: z.string(),
+})
+
 export const env = {
   ...serverEnv.parse(process.env),
   ...clientEnv.parse(process.env),
+  ...commonEnv.parse(process.env),
 }
