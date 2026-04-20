@@ -1,40 +1,78 @@
-import { honoConfig } from "@/hono/config"
+import { honoConfig } from "@/features/hono/config"
 import { createAdminClient } from "@/lib/appwrite"
-import { AppwriteException } from "node-appwrite"
+import { Clients } from "@/types/appwrite"
+import { ID, Query } from "node-appwrite"
 
-export interface ClientDetails {
-  $id: string
-  name: string
-  tax_id: string
-  address: string
-  email: string | null
+export type ClientDetails = Clients
+
+export type CreateClientPayload = Pick<
+  Clients,
+  "name" | "tax_id" | "address" | "email"
+>
+
+export type UpdateClientPayload = Partial<CreateClientPayload>
+
+// CLIENTS API
+export async function getClientById(id: string): Promise<Clients | null> {
+  const { tablesDB } = await createAdminClient()
+  const row = await tablesDB.getRow<Clients>({
+    databaseId: honoConfig.appwrite.databaseId,
+    tableId: honoConfig.appwrite.clientsTableId,
+    rowId: id,
+  })
+
+  return row
 }
 
-export async function getClientById(id: string): Promise<ClientDetails | null> {
-  try {
-    const { tablesDB } = await createAdminClient()
-    const row = await tablesDB.getRow({
-      databaseId: honoConfig.appwrite.databaseId,
-      tableId: honoConfig.appwrite.clientsTableId,
-      rowId: id,
-    })
-    const rowData = row as Record<string, unknown>
+export async function fetchClients(): Promise<Clients[]> {
+  const { tablesDB } = await createAdminClient()
 
-    return {
-      $id: String(row.$id),
-      name: String(rowData.name ?? ""),
-      tax_id: String(rowData.tax_id ?? ""),
-      address: String(rowData.address ?? ""),
-      email:
-        rowData.email === null || rowData.email === undefined
-          ? null
-          : String(rowData.email),
-    }
-  } catch (error) {
-    if (error instanceof AppwriteException && error.code === 404) {
-      return null
-    }
+  const rows = await tablesDB.listRows<Clients>({
+    databaseId: honoConfig.appwrite.databaseId,
+    tableId: honoConfig.appwrite.clientsTableId,
+    queries: [Query.limit(50)],
+  })
 
-    throw error
-  }
+  return rows.rows
+}
+
+export async function updateClientRow(
+  id: string,
+  payload: UpdateClientPayload
+): Promise<Clients> {
+  const { tablesDB } = await createAdminClient()
+
+  const row = await tablesDB.updateRow<Clients>({
+    databaseId: honoConfig.appwrite.databaseId,
+    tableId: honoConfig.appwrite.clientsTableId,
+    rowId: id,
+    data: {
+      ...(payload.name !== undefined && { name: payload.name }),
+      ...(payload.tax_id !== undefined && { tax_id: payload.tax_id }),
+      ...(payload.address !== undefined && { address: payload.address }),
+      ...(payload.email !== undefined && { email: payload.email }),
+    },
+  })
+
+  return row
+}
+
+export async function createClientRow(
+  payload: CreateClientPayload
+): Promise<Clients> {
+  const { tablesDB } = await createAdminClient()
+
+  const row = await tablesDB.createRow<Clients>({
+    databaseId: honoConfig.appwrite.databaseId,
+    tableId: honoConfig.appwrite.clientsTableId,
+    rowId: ID.unique(),
+    data: {
+      name: payload.name,
+      tax_id: payload.tax_id,
+      address: payload.address,
+      email: payload.email,
+    },
+  })
+
+  return row
 }
