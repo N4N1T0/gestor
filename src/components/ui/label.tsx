@@ -1,14 +1,13 @@
 "use client"
 
-import { Label as LabelPrimitive } from "radix-ui"
-import * as React from "react"
-
 import { cn } from "@/lib/utils"
+import { Label as LabelPrimitive } from "radix-ui"
 
-function Label({
-  className,
-  ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+interface LabelProps extends React.ComponentProps<typeof LabelPrimitive.Root> {
+  required?: boolean
+}
+
+function Label({ className, required, ...props }: LabelProps) {
   return (
     <LabelPrimitive.Root
       data-slot="label"
@@ -17,7 +16,10 @@ function Label({
         className
       )}
       {...props}
-    />
+    >
+      {props.children}
+      {required && <span className="text-red-500">*</span>}
+    </LabelPrimitive.Root>
   )
 }
 
