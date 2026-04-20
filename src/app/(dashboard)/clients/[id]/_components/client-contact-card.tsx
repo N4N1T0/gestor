@@ -15,16 +15,18 @@ export default function ClientContactCard({ client }: ClientContactCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardDescription>Contact</CardDescription>
-        <CardTitle>Communication details</CardTitle>
+        <CardDescription>Contacto</CardDescription>
+        <CardTitle>Datos de comunicación</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2 text-sm">
         <div>
-          <p className="text-muted-foreground">Email</p>
-          <p className="font-medium">{client.email ?? "No email"}</p>
+          <p className="text-muted-foreground">Correo electrónico</p>
+          <p className="font-medium">
+            {client.email ?? "Sin correo electrónico"}
+          </p>
         </div>
         <div>
-          <p className="text-muted-foreground">Address</p>
+          <p className="text-muted-foreground">Dirección</p>
           <p className="whitespace-pre-line font-medium">{client.address}</p>
         </div>
       </CardContent>
