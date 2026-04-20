@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { pathnameToBreadcrumbs } from "@/lib/utils"
 import { usePathname } from "next/navigation"
+import { Fragment } from "react"
 
 export default function MainHeader() {
   const pathName = usePathname()
@@ -30,8 +31,8 @@ export default function MainHeader() {
             const isLast = index === items.length - 1
 
             return (
-              <>
-                <BreadcrumbItem key={item.href}>
+              <Fragment key={item.href}>
+                <BreadcrumbItem>
                   {isLast ? (
                     <BreadcrumbPage>{item.label}</BreadcrumbPage>
                   ) : (
@@ -42,7 +43,7 @@ export default function MainHeader() {
                 </BreadcrumbItem>
 
                 {!isLast && <BreadcrumbSeparator />}
-              </>
+              </Fragment>
             )
           })}
         </BreadcrumbList>

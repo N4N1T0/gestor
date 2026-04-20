@@ -9,33 +9,20 @@ import {
   SidebarInput,
 } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useGetClients } from "@/features/tanstack/hooks/clients"
+import { useDataSearch } from "@/hooks/use-data-search"
+import { filterSearchData } from "@/lib/utils"
 import { NavMainItem } from "@/types"
-import type { Clients } from "@/types/appwrite"
-import { useQuery } from "@tanstack/react-query"
-import Link from "next/link"
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
+import { CreateNewDataBtn } from "./create-new-data-btn"
+import SecondSidebarCard from "./second-sidebar-card"
 
 interface SecondSidebarProps {
   activeItem: NavMainItem
 }
 
-type ClientListItem = Pick<Clients, "name" | "email" | "address" | "tax_id"> & {
-  $id: string
-}
-
-async function fetchClients() {
-  const response = await fetch("/api/clients")
-
-  if (!response.ok) {
-    throw new Error("Unable to fetch clients")
-  }
-
-  const payload = (await response.json()) as { data: ClientListItem[] }
-  return payload.data
-}
-
 export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
-  const [search, setSearch] = useState("")
+  const { search, setSearch } = useDataSearch()
   const isClientsSection = activeItem?.url === "/clients"
 
   const {
@@ -43,45 +30,35 @@ export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
     error,
     isError,
     isLoading,
-  } = useQuery({
-    queryKey: ["clients"],
-    queryFn: fetchClients,
+  } = useGetClients({
     enabled: isClientsSection,
   })
 
-  const filteredClients = useMemo(() => {
-    if (!search) return clients
+  // COMPUTED
+  const filteredClients = useMemo(
+    () => filterSearchData(clients, search),
+    [clients, search]
+  )
 
-    const needle = search.toLowerCase()
-    return clients.filter((client) => {
-      const name = client.name.toLowerCase()
-      const email = client.email?.toLowerCase() ?? ""
-      const address = client.address.toLowerCase()
-      const taxId = client.tax_id.toLowerCase()
-
-      return (
-        name.includes(needle) ||
-        email.includes(needle) ||
-        address.includes(needle) ||
-        taxId.includes(needle)
-      )
-    })
-  }, [clients, search])
+  // HANDLERS
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value)
+  }
 
   return (
     <Sidebar collapsible="none" className="hidden flex-1 md:flex">
       <SidebarHeader className="gap-3.5 border-b p-4">
         <div className="flex w-full items-center justify-between">
-          <div className="text-base font-medium text-foreground">
+          <div className="text-base font-medium text-foreground flex-1">
             {activeItem?.title}
           </div>
 
-          {/* TODO: MAKE A POPOVER OR A SELECT FOR FILTERING */}
+          <CreateNewDataBtn dataSource={activeItem.title} />
         </div>
         <SidebarInput
           placeholder="Type to search..."
           value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          onChange={handleSearchChange}
         />
       </SidebarHeader>
       <SidebarContent>
@@ -124,24 +101,11 @@ export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
               !isLoading &&
               !isError &&
               filteredClients.map((client) => (
-                <Link
-                  key={client.$id}
-                  href={`${activeItem?.url}/${client.$id}`}
-                  className="flex flex-col items-start gap-2 border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-muted transition-colors duration-200 ease-in"
-                >
-                  <div className="flex w-full items-center gap-2">
-                    <span className="font-medium">{client.name}</span>
-                    <span className="ml-auto text-xs text-muted-foreground">
-                      {client.tax_id}
-                    </span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {client.email || "No email"}
-                  </span>
-                  <span className="line-clamp-2 w-65 text-xs whitespace-break-spaces">
-                    {client.address}
-                  </span>
-                </Link>
+                <SecondSidebarCard
+                  key={client.id}
+                  baseUrl={activeItem.url}
+                  data={client}
+                />
               ))}
           </SidebarGroupContent>
         </SidebarGroup>
