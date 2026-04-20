@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { honoConfig } from "@/hono/config"
+import { honoConfig } from "@/features/hono/config"
 import { createAdminClient } from "@/lib/appwrite"
 import { Query } from "node-appwrite"
 
