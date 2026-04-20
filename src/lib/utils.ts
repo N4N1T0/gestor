@@ -1,4 +1,4 @@
-import { BreadcrumbItemData } from "@/types"
+import { BreadcrumbItemData, NavMainItem, SecondSidebarCardData } from "@/types"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -52,6 +52,27 @@ export function pathnameToBreadcrumbs(pathname: string): BreadcrumbItemData[] {
   }))
 }
 
+/** Resolves the active nav item based on the current pathname.
+ * It matches exact paths and nested paths (e.g. /clients/123 -> /clients).
+ */
+export function getActiveNavItemByPathname(
+  pathname: string,
+  navItems: NavMainItem[]
+): NavMainItem {
+  const normalizedPathname = pathname.toLowerCase()
+
+  const matchedItem = navItems.find((item) => {
+    const normalizedUrl = item.url.toLowerCase()
+
+    return (
+      normalizedPathname === normalizedUrl ||
+      normalizedPathname.startsWith(`${normalizedUrl}/`)
+    )
+  })
+
+  return matchedItem ?? navItems[0]
+}
+
 /** Utility function to handle promise rejections in an async/await style.
  * It takes a promise and returns a tuple where the first element is the error (if any) and the second element is the resolved data (if successful).
  * This allows for cleaner error handling without needing to use try/catch blocks.
@@ -69,4 +90,25 @@ export const catchError = async <T>(
   return promise
     .then((data) => [undefined, data] as [undefined, T])
     .catch((error) => [error] as [Error])
+}
+
+/** Utility function to filter an array of SecondSidebarCardData based on a search string.
+ * It checks if the search string is included in either the title or description of each client, ignoring case.
+ * If the search string is empty, it returns the original array without filtering.
+ * This is useful for implementing a search feature in a sidebar or list of items.
+ */
+export const filterSearchData = (
+  data: SecondSidebarCardData[],
+  search: string
+) => {
+  if (!search) return data
+
+  const needle = search.toLowerCase()
+
+  return data.filter((client) => {
+    const name = client.title.toLowerCase()
+    const email = client.description?.toLowerCase() ?? ""
+
+    return name.includes(needle) || email.includes(needle)
+  })
 }
