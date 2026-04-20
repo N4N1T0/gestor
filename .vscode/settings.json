@@ -24,6 +24,7 @@
     "napi",
     "nodelib",
     "nolyfill",
+    "nuqs",
     "oklch",
     "picomatch",
     "postcss",
