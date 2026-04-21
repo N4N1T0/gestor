@@ -13,6 +13,7 @@ const clientEnv = z.object({
 const commonEnv = z.object({
   NEXT_APPWRITE_DATABASE_ID: z.string(),
   NEXT_APPWRITE_CLIENTS_TABLE_ID: z.string(),
+  NEXT_APPWRITE_INVOICES_TABLE_ID: z.string(),
 })
 
 export const env = {
