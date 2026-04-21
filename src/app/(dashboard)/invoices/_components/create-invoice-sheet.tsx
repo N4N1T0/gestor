@@ -412,7 +412,8 @@ export default function CreateInvoiceSheet({
                   <Select
                     aria-invalid={fieldState.invalid}
                     disabled={isDisabled}
-                    {...field}
+                    value={field.value}
+                    onValueChange={field.onChange}
                   >
                     <SelectTrigger id="invoice-status">
                       <SelectValue placeholder="Selecciona un estado" />
