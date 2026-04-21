@@ -1,11 +1,12 @@
 import {
+  CreateInvoicePayload,
+  UpdateInvoicePayload,
   createInvoiceRow,
   fetchInvoices,
   getInvoiceById,
   updateInvoiceRow,
 } from "@/lib/api"
 import { mapInvoiceToSidebarItem } from "@/lib/second-sidebar-mappers"
-import { Invoices } from "@/types/appwrite"
 import { Hono } from "hono"
 
 const invoicesRoute = new Hono()
@@ -38,17 +39,7 @@ invoicesRoute
   })
   .post("/", async (c) => {
     try {
-      const payload = (await c.req.json()) as Pick<
-        Invoices,
-        | "invoice_number"
-        | "issue_date"
-        | "due_date"
-        | "description"
-        | "subtotal"
-        | "vat_amount"
-        | "total"
-        | "status"
-      >
+      const payload = (await c.req.json()) as CreateInvoicePayload
 
       const invoice = await createInvoiceRow(payload)
 
@@ -60,19 +51,7 @@ invoicesRoute
   .patch("/:id", async (c) => {
     try {
       const id = c.req.param("id")
-      const payload = (await c.req.json()) as Partial<
-        Pick<
-          Invoices,
-          | "invoice_number"
-          | "issue_date"
-          | "due_date"
-          | "description"
-          | "subtotal"
-          | "vat_amount"
-          | "total"
-          | "status"
-        >
-      >
+      const payload = (await c.req.json()) as UpdateInvoicePayload
 
       const invoice = await updateInvoiceRow(id, payload)
 
