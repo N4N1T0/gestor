@@ -3,9 +3,9 @@
 import { createAdminClient, createSessionClient } from "@/lib/appwrite/server"
 import { actionClient } from "@/lib/next-safe-actions"
 import { catchError } from "@/lib/utils"
-import { AppwriteException } from "appwrite"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
+import { AppwriteException } from "node-appwrite"
 import { loginUserResponseSchema, loginUserSchema } from "../(home)/_schemas"
 
 export const loginUser = actionClient

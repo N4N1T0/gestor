@@ -38,7 +38,7 @@ import { useGetClients } from "@/features/tanstack/hooks/clients"
 import { tanstackKeys } from "@/features/tanstack/keys"
 import { useCreateNewData } from "@/hooks/use-create-new-data"
 import { uploadFile } from "@/lib/appwrite/client"
-import { cn } from "@/lib/utils"
+import { catchError, cn } from "@/lib/utils"
 import { NavMainItems, NewDataAction } from "@/types"
 import { InvoicesStatus, type Invoices } from "@/types/appwrite"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -92,6 +92,7 @@ export default function CreateInvoiceSheet({
       onSuccess: () => {
         reset()
         clearNewData()
+        setFile(null)
         toast.success("Factura creada correctamente")
         queryClient.invalidateQueries({ queryKey: tanstackKeys.invoices })
       },
@@ -107,6 +108,7 @@ export default function CreateInvoiceSheet({
       onSuccess: () => {
         reset()
         clearNewData()
+        setFile(null)
         toast.success("Factura actualizada correctamente")
         queryClient.invalidateQueries({ queryKey: tanstackKeys.invoices })
         if (invoice) {
@@ -158,7 +160,12 @@ export default function CreateInvoiceSheet({
 
   // HANDLERS
   const onSubmit = handleSubmit(async (data) => {
-    const fileUrl = file ? await uploadFile(file) : undefined
+    const [error, fileUrl] = await catchError(uploadFile(file))
+
+    if (error) {
+      toast.error(error.message ?? "No se pudo subir el archivo")
+      return
+    }
 
     if (isEditing && invoice) {
       executeUpdate({ id: invoice.$id, ...data, file_url: fileUrl })
@@ -509,8 +516,8 @@ export default function CreateInvoiceSheet({
               <Input
                 id="invoice-file"
                 type="file"
-                required
                 disabled={isDisabled}
+                accept=".jpg,.jpeg,.png,.pdf"
                 onChange={(e) => {
                   const selectedFile = e.target.files?.[0] ?? null
                   setFile(selectedFile)

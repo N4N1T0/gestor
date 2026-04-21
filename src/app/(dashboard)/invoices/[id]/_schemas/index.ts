@@ -23,7 +23,11 @@ export const createInvoiceSchema = z
     vat_amount: z.number().min(0).optional().nullable(),
     total: z.number().min(0, "El total no puede ser negativo"),
     status: z.enum(InvoicesStatus).default(InvoicesStatus.DRAFT),
-    file_url: z.string().optional().nullable(),
+    file_url: z
+      .string()
+      .max(50, "La URL del archivo no puede exceder los 50 caracteres")
+      .optional()
+      .nullable(),
   })
   .superRefine((data, ctx) => {
     if (!data.due_date) {
@@ -63,7 +67,11 @@ export const updateInvoiceSchema = z
     vat_amount: z.number().min(0).optional().nullable(),
     total: z.number().min(0).optional(),
     status: z.enum(InvoicesStatus).optional(),
-    file_url: z.string().optional().nullable(),
+    file_url: z
+      .string()
+      .max(50, "La URL del archivo no puede exceder los 50 caracteres")
+      .optional()
+      .nullable(),
   })
   .superRefine((data, ctx) => {
     if (!data.issue_date || !data.due_date) {
