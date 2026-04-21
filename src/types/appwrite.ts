@@ -14,11 +14,9 @@ export type Clients = Models.Row & {
   tax_id: string
   address: string
   email: string | null
-  invoices?: Invoices[]
 }
 
 export type Invoices = Models.Row & {
-  client_id: Clients
   invoice_number: string
   issue_date: string
   due_date: string | null
@@ -27,4 +25,5 @@ export type Invoices = Models.Row & {
   vat_amount: number | null
   total: number
   status: InvoicesStatus
+  client_id: Clients
 }

@@ -93,18 +93,6 @@
                     "size": 255,
                     "default": null,
                     "encrypt": false
-                },
-                {
-                    "key": "invoices",
-                    "type": "relationship",
-                    "required": false,
-                    "array": false,
-                    "relatedTable": "invoices",
-                    "relationType": "manyToOne",
-                    "twoWay": true,
-                    "twoWayKey": "client_id",
-                    "onDelete": "cascade",
-                    "side": "child"
                 }
             ],
             "indexes": []
@@ -117,18 +105,6 @@
             "enabled": true,
             "rowSecurity": false,
             "columns": [
-                {
-                    "key": "client_id",
-                    "type": "relationship",
-                    "required": false,
-                    "array": false,
-                    "relatedTable": "clients",
-                    "relationType": "manyToOne",
-                    "twoWay": true,
-                    "twoWayKey": "invoices",
-                    "onDelete": "cascade",
-                    "side": "parent"
-                },
                 {
                     "key": "invoice_number",
                     "type": "varchar",
@@ -172,15 +148,6 @@
                     "max": 1.7976931348623157e+308
                 },
                 {
-                    "key": "C",
-                    "type": "double",
-                    "required": false,
-                    "array": false,
-                    "default": 21,
-                    "min": -1.7976931348623157e+308,
-                    "max": 1.7976931348623157e+308
-                },
-                {
                     "key": "vat_amount",
                     "type": "double",
                     "required": false,
@@ -210,6 +177,18 @@
                         "sent",
                         "paid"
                     ]
+                },
+                {
+                    "key": "client_id",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "clients",
+                    "relationType": "manyToOne",
+                    "twoWay": false,
+                    "twoWayKey": "invoices",
+                    "onDelete": "cascade",
+                    "side": "parent"
                 }
             ],
             "indexes": []
