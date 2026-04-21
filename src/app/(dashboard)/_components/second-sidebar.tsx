@@ -122,7 +122,7 @@ export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
             {(isClientsSection || isInvoicesSection) &&
               !isLoading &&
               !isError &&
-              filteredClients.length === 0 && (
+              filteredItems.length === 0 && (
                 <div className="p-4 text-sm text-muted-foreground">
                   No se encontraron resultados.
                 </div>
@@ -131,11 +131,11 @@ export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
             {(isClientsSection || isInvoicesSection) &&
               !isLoading &&
               !isError &&
-              filteredClients.map((client) => (
+              filteredItems.map((item) => (
                 <SecondSidebarCard
-                  key={client.id}
+                  key={item.id}
                   baseUrl={activeItem.url}
-                  data={client}
+                  data={item}
                 />
               ))}
           </SidebarGroupContent>
