@@ -12,6 +12,22 @@ export type CreateClientPayload = Pick<
 
 export type UpdateClientPayload = Partial<CreateClientPayload>
 
+export type InvoiceDetails = Invoices
+
+export type CreateInvoicePayload = {
+  client_id: string
+  invoice_number: Invoices["invoice_number"]
+  issue_date: Invoices["issue_date"]
+  due_date: Invoices["due_date"]
+  description: Invoices["description"]
+  subtotal: Invoices["subtotal"]
+  vat_amount: Invoices["vat_amount"]
+  total: Invoices["total"]
+  status: Invoices["status"]
+}
+
+export type UpdateInvoicePayload = Partial<CreateInvoicePayload>
+
 // CLIENTS API
 export async function getClientById(id: string): Promise<Clients | null> {
   const { tablesDB } = await createAdminClient()
@@ -78,14 +94,84 @@ export async function createClientRow(
 }
 
 // INVOICES API
+export async function getInvoiceById(id: string): Promise<Invoices | null> {
+  const { tablesDB } = await createAdminClient()
+  const row = await tablesDB.getRow<Invoices>({
+    databaseId: honoConfig.appwrite.databaseId,
+    tableId: honoConfig.appwrite.invoicesTableId,
+    rowId: id,
+  })
+
+  return row
+}
+
 export async function fetchInvoices(): Promise<Invoices[]> {
   const { tablesDB } = await createAdminClient()
 
   const rows = await tablesDB.listRows<Invoices>({
     databaseId: honoConfig.appwrite.databaseId,
     tableId: honoConfig.appwrite.invoicesTableId,
-    queries: [Query.limit(50)],
+    queries: [Query.limit(50), Query.select(["*", "client_id.name"])],
   })
 
   return rows.rows
+}
+
+export async function createInvoiceRow(
+  payload: CreateInvoicePayload
+): Promise<Invoices> {
+  const { tablesDB } = await createAdminClient()
+
+  const row = await tablesDB.createRow({
+    databaseId: honoConfig.appwrite.databaseId,
+    tableId: honoConfig.appwrite.invoicesTableId,
+    rowId: ID.unique(),
+    data: {
+      client_id: payload.client_id,
+      invoice_number: payload.invoice_number,
+      issue_date: payload.issue_date,
+      due_date: payload.due_date ?? null,
+      description: payload.description,
+      subtotal: payload.subtotal,
+      vat_amount: payload.vat_amount ?? null,
+      total: payload.total,
+      status: payload.status,
+    },
+  })
+
+  return row as unknown as Invoices
+}
+
+export async function updateInvoiceRow(
+  id: string,
+  payload: UpdateInvoicePayload
+): Promise<Invoices> {
+  const { tablesDB } = await createAdminClient()
+
+  const row = await tablesDB.updateRow({
+    databaseId: honoConfig.appwrite.databaseId,
+    tableId: honoConfig.appwrite.invoicesTableId,
+    rowId: id,
+    data: {
+      ...(payload.client_id !== undefined && { client_id: payload.client_id }),
+      ...(payload.invoice_number !== undefined && {
+        invoice_number: payload.invoice_number,
+      }),
+      ...(payload.issue_date !== undefined && {
+        issue_date: payload.issue_date,
+      }),
+      ...(payload.due_date !== undefined && { due_date: payload.due_date }),
+      ...(payload.description !== undefined && {
+        description: payload.description,
+      }),
+      ...(payload.subtotal !== undefined && { subtotal: payload.subtotal }),
+      ...(payload.vat_amount !== undefined && {
+        vat_amount: payload.vat_amount,
+      }),
+      ...(payload.total !== undefined && { total: payload.total }),
+      ...(payload.status !== undefined && { status: payload.status }),
+    },
+  })
+
+  return row as unknown as Invoices
 }
