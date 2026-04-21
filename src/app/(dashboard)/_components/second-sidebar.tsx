@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useGetClients } from "@/features/tanstack/hooks/clients"
+import { useGetInvoices } from "@/features/tanstack/hooks/invoices"
 import { useDataSearch } from "@/hooks/use-data-search"
 import { filterSearchData } from "@/lib/utils"
 import { NavMainItem } from "@/types"
@@ -24,20 +25,50 @@ interface SecondSidebarProps {
 export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
   const { search, setSearch } = useDataSearch()
   const isClientsSection = activeItem?.url === "/clients"
+  const isInvoicesSection = activeItem?.url === "/invoices"
 
   const {
     data: clients = [],
-    error,
-    isError,
-    isLoading,
+    error: clientsError,
+    isError: isClientsError,
+    isLoading: isClientsLoading,
   } = useGetClients({
     enabled: isClientsSection,
   })
 
+  const {
+    data: invoices = [],
+    error: invoicesError,
+    isError: isInvoicesError,
+    isLoading: isInvoicesLoading,
+  } = useGetInvoices({
+    enabled: isInvoicesSection,
+  })
+
+  const data = useMemo(() => {
+    return isClientsSection ? clients : isInvoicesSection ? invoices : []
+  }, [clients, invoices, isClientsSection, isInvoicesSection])
+
+  const isLoading = isClientsSection
+    ? isClientsLoading
+    : isInvoicesSection
+      ? isInvoicesLoading
+      : false
+  const isError = isClientsSection
+    ? isClientsError
+    : isInvoicesSection
+      ? isInvoicesError
+      : false
+  const error = isClientsSection
+    ? clientsError
+    : isInvoicesSection
+      ? invoicesError
+      : null
+
   // COMPUTED
-  const filteredClients = useMemo(
-    () => filterSearchData(clients, search),
-    [clients, search]
+  const filteredItems = useMemo(
+    () => filterSearchData(data, search),
+    [data, search]
   )
 
   // HANDLERS
@@ -64,13 +95,13 @@ export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
       <SidebarContent>
         <SidebarGroup className="px-0">
           <SidebarGroupContent>
-            {!isClientsSection && (
+            {!isClientsSection && !isInvoicesSection && (
               <div className="p-4 text-sm text-muted-foreground">
                 No data source configured for this section yet.
               </div>
             )}
 
-            {isClientsSection && isLoading && (
+            {(isClientsSection || isInvoicesSection) && isLoading && (
               <div className="space-y-0">
                 {Array.from({ length: 4 }).map((_, index) => (
                   <div key={index} className="border-b p-4 last:border-b-0">
@@ -82,22 +113,22 @@ export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
               </div>
             )}
 
-            {isClientsSection && isError && (
+            {(isClientsSection || isInvoicesSection) && isError && (
               <div className="p-4 text-sm text-destructive">
-                {(error as Error).message || "Error loading clients."}
+                {(error as Error).message || "Error loading data."}
               </div>
             )}
 
-            {isClientsSection &&
+            {(isClientsSection || isInvoicesSection) &&
               !isLoading &&
               !isError &&
               filteredClients.length === 0 && (
                 <div className="p-4 text-sm text-muted-foreground">
-                  No clients found.
+                  No se encontraron resultados.
                 </div>
               )}
 
-            {isClientsSection &&
+            {(isClientsSection || isInvoicesSection) &&
               !isLoading &&
               !isError &&
               filteredClients.map((client) => (

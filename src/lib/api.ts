@@ -1,6 +1,6 @@
 import { honoConfig } from "@/features/hono/config"
 import { createAdminClient } from "@/lib/appwrite"
-import { Clients } from "@/types/appwrite"
+import { Clients, Invoices } from "@/types/appwrite"
 import { ID, Query } from "node-appwrite"
 
 export type ClientDetails = Clients
@@ -75,4 +75,17 @@ export async function createClientRow(
   })
 
   return row
+}
+
+// INVOICES API
+export async function fetchInvoices(): Promise<Invoices[]> {
+  const { tablesDB } = await createAdminClient()
+
+  const rows = await tablesDB.listRows<Invoices>({
+    databaseId: honoConfig.appwrite.databaseId,
+    tableId: honoConfig.appwrite.invoicesTableId,
+    queries: [Query.limit(50)],
+  })
+
+  return rows.rows
 }
