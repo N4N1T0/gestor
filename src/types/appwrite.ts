@@ -24,7 +24,6 @@ export type Invoices = Models.Row & {
   due_date: string | null
   description: string
   subtotal: number
-  C: number
   vat_amount: number | null
   total: number
   status: InvoicesStatus
