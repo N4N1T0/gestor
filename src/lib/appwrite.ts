@@ -48,6 +48,9 @@ export async function getLoggedInUser() {
     return await account.get()
   } catch (error) {
     if (error instanceof AppwriteException) {
+      if (error.code === 401 || error.code === 403) {
+        return null
+      }
       throw new Error(error.message ?? "No se pudo obtener el usuario")
     }
     return null
