@@ -93,6 +93,123 @@
                     "size": 255,
                     "default": null,
                     "encrypt": false
+                },
+                {
+                    "key": "invoices",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "invoices",
+                    "relationType": "manyToOne",
+                    "twoWay": true,
+                    "twoWayKey": "client_id",
+                    "onDelete": "cascade",
+                    "side": "child"
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "invoices",
+            "$permissions": [],
+            "databaseId": "69e4d5a20031673b27e7",
+            "name": "invoices",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "client_id",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedTable": "clients",
+                    "relationType": "manyToOne",
+                    "twoWay": true,
+                    "twoWayKey": "invoices",
+                    "onDelete": "cascade",
+                    "side": "parent"
+                },
+                {
+                    "key": "invoice_number",
+                    "type": "varchar",
+                    "required": true,
+                    "array": false,
+                    "size": 50,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "issue_date",
+                    "type": "datetime",
+                    "required": true,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "due_date",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "description",
+                    "type": "text",
+                    "required": true,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "subtotal",
+                    "type": "double",
+                    "required": true,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "C",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": 21,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "vat_amount",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "total",
+                    "type": "double",
+                    "required": true,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": "draft",
+                    "format": "enum",
+                    "elements": [
+                        "draft",
+                        "sent",
+                        "paid"
+                    ]
                 }
             ],
             "indexes": []
