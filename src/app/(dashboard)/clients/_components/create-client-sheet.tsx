@@ -31,7 +31,7 @@ import { toast } from "sonner"
 import { tanstackKeys } from "@/features/tanstack/keys"
 import { Clients } from "@/types/appwrite"
 import { useQueryClient } from "@tanstack/react-query"
-import { CreateClientSchema, createClientSchema } from "../_schemas"
+import { CreateClientSchema, createClientSchema } from "../[id]/_schemas"
 
 interface CreateClientSheetProps {
   client?: Clients
