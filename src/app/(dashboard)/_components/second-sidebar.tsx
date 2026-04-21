@@ -66,7 +66,7 @@ export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
       : null
 
   // COMPUTED
-  const filteredClients = useMemo(
+  const filteredItems = useMemo(
     () => filterSearchData(data, search),
     [data, search]
   )
