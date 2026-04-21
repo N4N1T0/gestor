@@ -29,3 +29,8 @@ export enum NavMainItems {
 export interface PageParams {
   params: Promise<{ [key: string]: string | string[] | undefined }>
 }
+
+export enum NewDataAction {
+  CREATE = "create",
+  EDIT = "edit",
+}

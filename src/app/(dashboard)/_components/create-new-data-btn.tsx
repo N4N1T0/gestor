@@ -7,24 +7,24 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useCreateNewData } from "@/hooks/use-create-new-data"
-import { NavMainItems } from "@/types"
+import { NavMainItems, NewDataAction } from "@/types"
 import { PencilLine, Plus } from "lucide-react"
 
 interface CreateNewDataBtnProps {
   dataSource: NavMainItems
-  action?: "create" | "edit"
+  action?: NewDataAction
 }
 
 export const CreateNewDataBtn = ({
   dataSource,
-  action = "create",
+  action = NewDataAction.CREATE,
 }: CreateNewDataBtnProps) => {
   const { setNewData } = useCreateNewData()
 
-  const formattedDataSource = dataSource.toLowerCase().replace("s", "")
+  const formattedDataSource = dataSource.toLowerCase().replace(/s$/, "")
 
   const handleClick = () => {
-    setNewData(dataSource)
+    setNewData(dataSource, action)
   }
 
   return (

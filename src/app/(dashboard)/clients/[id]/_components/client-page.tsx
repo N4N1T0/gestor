@@ -3,7 +3,7 @@
 import { CreateNewDataBtn } from "@/app/(dashboard)/_components/create-new-data-btn"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useGetClientById } from "@/features/tanstack/hooks/clients"
-import { NavMainItems } from "@/types"
+import { NavMainItems, NewDataAction } from "@/types"
 import ClientContactCard from "./client-contact-card"
 import ClientIdentityCard from "./client-identity-card"
 import CreateClientSheet from "./create-client-sheet"
@@ -55,11 +55,14 @@ export default function ClientPage({ id }: ClientPageProps) {
           </p>
         </div>
 
-        <CreateNewDataBtn dataSource={NavMainItems.CLIENTS} action="edit" />
+        <CreateNewDataBtn
+          dataSource={NavMainItems.CLIENTS}
+          action={NewDataAction.EDIT}
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <CreateClientSheet client={client} />
+        <CreateClientSheet client={client} key={client.$id} />
         <ClientIdentityCard client={client} />
         <ClientContactCard client={client} />
       </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { NavMainItems } from "@/types"
+import { NavMainItems, NewDataAction } from "@/types"
 import { debounce, parseAsStringEnum, useQueryState } from "nuqs"
 
 export function useCreateNewData() {
@@ -11,12 +11,31 @@ export function useCreateNewData() {
       .withOptions({ shallow: true })
   )
 
+  const [newDataAction, setNewDataAction] = useQueryState(
+    "newDataAction",
+    parseAsStringEnum<NewDataAction | "">(Object.values(NewDataAction))
+      .withDefault("")
+      .withOptions({ shallow: true })
+  )
+
   return {
     newData: newData,
-    setNewData: (newDataValue: NavMainItems | "") =>
+    newDataAction: newDataAction,
+    setNewData: (
+      newDataValue: NavMainItems | "",
+      action: NewDataAction = NewDataAction.CREATE
+    ) => {
       setNewData(newDataValue, {
         limitUrlUpdates: newDataValue === "" ? undefined : debounce(500),
-      }),
-    clearNewData: () => setNewData(""),
+      })
+
+      setNewDataAction(newDataValue === "" ? "" : action, {
+        limitUrlUpdates: newDataValue === "" ? undefined : debounce(500),
+      })
+    },
+    clearNewData: () => {
+      setNewData("")
+      setNewDataAction("")
+    },
   }
 }

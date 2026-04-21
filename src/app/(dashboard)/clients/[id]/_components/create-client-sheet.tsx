@@ -21,9 +21,10 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useCreateNewData } from "@/hooks/use-create-new-data"
-import { NavMainItems } from "@/types"
+import { NavMainItems, NewDataAction } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useAction } from "next-safe-action/hooks"
+import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 
@@ -36,21 +37,23 @@ interface CreateClientSheetProps {
   client?: Clients
 }
 
+const EMPTY_FORM_VALUES: CreateClientSchema = {
+  name: "",
+  tax_id: "",
+  address: "",
+  email: "",
+}
+
 export default function CreateClientSheet({ client }: CreateClientSheetProps) {
-  const isEditing = !!client
   const queryClient = useQueryClient()
 
   // STATE
-  const { newData, clearNewData } = useCreateNewData()
+  const { newData, newDataAction, clearNewData } = useCreateNewData()
+  const isEditing = Boolean(client) && newDataAction === NewDataAction.EDIT
   const { handleSubmit, reset, formState, control } =
     useForm<CreateClientSchema>({
       resolver: zodResolver(createClientSchema as never),
-      defaultValues: {
-        name: client?.name ?? "",
-        tax_id: client?.tax_id ?? "",
-        address: client?.address ?? "",
-        email: client?.email ?? "",
-      },
+      defaultValues: EMPTY_FORM_VALUES,
     })
 
   // ACTIONS
@@ -98,9 +101,25 @@ export default function CreateClientSheet({ client }: CreateClientSheetProps) {
   const isExecuting = isCreating || isUpdating
   const isDisabled = isExecuting || formState.isSubmitting
 
+  useEffect(() => {
+    if (!isOpen) return
+
+    if (isEditing && client) {
+      reset({
+        name: client.name ?? "",
+        tax_id: client.tax_id ?? "",
+        address: client.address ?? "",
+        email: client.email ?? "",
+      })
+      return
+    }
+
+    reset(EMPTY_FORM_VALUES)
+  }, [client, isEditing, isOpen, reset])
+
   // HANDLERS
   const onSubmit = handleSubmit((data) => {
-    if (isEditing) {
+    if (isEditing && client) {
       executeUpdate({ id: client.$id, ...data })
     } else {
       executeCreate(data)
@@ -109,7 +128,7 @@ export default function CreateClientSheet({ client }: CreateClientSheetProps) {
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      reset()
+      reset(EMPTY_FORM_VALUES)
       clearNewData()
     }
   }
@@ -228,7 +247,7 @@ export default function CreateClientSheet({ client }: CreateClientSheetProps) {
               type="button"
               variant="outline"
               onClick={() => {
-                reset()
+                reset(EMPTY_FORM_VALUES)
                 clearNewData()
               }}
               disabled={isDisabled}
