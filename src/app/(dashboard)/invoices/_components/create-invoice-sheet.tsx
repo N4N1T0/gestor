@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -36,7 +37,8 @@ import {
 import { useGetClients } from "@/features/tanstack/hooks/clients"
 import { tanstackKeys } from "@/features/tanstack/keys"
 import { useCreateNewData } from "@/hooks/use-create-new-data"
-import { cn } from "@/lib/utils"
+import { uploadFile } from "@/lib/appwrite/client"
+import { catchError, cn } from "@/lib/utils"
 import { NavMainItems, NewDataAction } from "@/types"
 import { InvoicesStatus, type Invoices } from "@/types/appwrite"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -45,7 +47,7 @@ import { format } from "date-fns"
 import { es } from "date-fns/locale"
 import { CalendarIcon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { CreateInvoiceSchema, createInvoiceSchema } from "../[id]/_schemas"
@@ -64,6 +66,7 @@ const EMPTY_FORM_VALUES: CreateInvoiceSchema = {
   vat_amount: null,
   total: 0,
   status: InvoicesStatus.DRAFT,
+  file_url: undefined,
 }
 
 export default function CreateInvoiceSheet({
@@ -72,12 +75,14 @@ export default function CreateInvoiceSheet({
   const queryClient = useQueryClient()
 
   // STATE
+  const [file, setFile] = useState<File | null>(null)
   const { newData, newDataAction, clearNewData } = useCreateNewData()
   const isEditing = Boolean(invoice) && newDataAction === NewDataAction.EDIT
   const { handleSubmit, reset, formState, control } =
     useForm<CreateInvoiceSchema>({
       resolver: zodResolver(createInvoiceSchema as never),
       defaultValues: EMPTY_FORM_VALUES,
+      mode: "onChange",
     })
 
   // ACTIONS
@@ -87,6 +92,7 @@ export default function CreateInvoiceSheet({
       onSuccess: () => {
         reset()
         clearNewData()
+        setFile(null)
         toast.success("Factura creada correctamente")
         queryClient.invalidateQueries({ queryKey: tanstackKeys.invoices })
       },
@@ -102,6 +108,7 @@ export default function CreateInvoiceSheet({
       onSuccess: () => {
         reset()
         clearNewData()
+        setFile(null)
         toast.success("Factura actualizada correctamente")
         queryClient.invalidateQueries({ queryKey: tanstackKeys.invoices })
         if (invoice) {
@@ -143,6 +150,7 @@ export default function CreateInvoiceSheet({
         vat_amount: invoice.vat_amount ?? null,
         total: invoice.total ?? 0,
         status: invoice.status ?? InvoicesStatus.DRAFT,
+        file_url: invoice.file_url ?? undefined,
       })
       return
     }
@@ -151,11 +159,18 @@ export default function CreateInvoiceSheet({
   }, [invoice, isEditing, isOpen, reset])
 
   // HANDLERS
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
+    const [error, fileUrl] = await catchError(uploadFile(file))
+
+    if (error) {
+      toast.error(error.message ?? "No se pudo subir el archivo")
+      return
+    }
+
     if (isEditing && invoice) {
-      executeUpdate({ id: invoice.$id, ...data })
+      executeUpdate({ id: invoice.$id, ...data, file_url: fileUrl })
     } else {
-      executeCreate(data)
+      executeCreate({ ...data, file_url: fileUrl })
     }
   })
 
@@ -169,7 +184,7 @@ export default function CreateInvoiceSheet({
   return (
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
       <SheetContent side="right" className="sm:max-w-md">
-        <SheetHeader>
+        <SheetHeader className="border-b">
           <SheetTitle>
             {isEditing ? "Editar factura" : "Crear factura"}
           </SheetTitle>
@@ -180,7 +195,10 @@ export default function CreateInvoiceSheet({
           </SheetDescription>
         </SheetHeader>
 
-        <form className="flex h-full flex-col gap-4 p-4" onSubmit={onSubmit}>
+        <form
+          className="flex h-full flex-col gap-4 p-4 overflow-y-scroll"
+          onSubmit={onSubmit}
+        >
           <FieldGroup>
             <Controller
               name="client_id"
@@ -490,6 +508,23 @@ export default function CreateInvoiceSheet({
                 </Field>
               )}
             />
+
+            <Field>
+              <FieldLabel htmlFor="invoice-file" required>
+                Archivo
+              </FieldLabel>
+              <Input
+                id="invoice-file"
+                type="file"
+                disabled={isDisabled}
+                accept=".jpg,.jpeg,.png,.pdf"
+                onChange={(e) => {
+                  const selectedFile = e.target.files?.[0] ?? null
+                  setFile(selectedFile)
+                }}
+              />
+              <FieldDescription>jpg, png o pdf. Máximo 7MB.</FieldDescription>
+            </Field>
           </FieldGroup>
 
           <SheetFooter className="px-0 pb-0 border-t mt-auto">

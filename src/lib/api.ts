@@ -1,5 +1,5 @@
 import { honoConfig } from "@/features/hono/config"
-import { createAdminClient } from "@/lib/appwrite"
+import { createAdminClient } from "@/lib/appwrite/server"
 import { Clients, Invoices } from "@/types/appwrite"
 import { ID, Query } from "node-appwrite"
 
@@ -24,6 +24,7 @@ export type CreateInvoicePayload = {
   vat_amount: Invoices["vat_amount"]
   total: Invoices["total"]
   status: Invoices["status"]
+  file_url: Invoices["file_url"]
 }
 
 export type UpdateInvoicePayload = Partial<CreateInvoicePayload>
@@ -136,6 +137,7 @@ export async function createInvoiceRow(
       vat_amount: payload.vat_amount ?? null,
       total: payload.total,
       status: payload.status,
+      file_url: payload.file_url ?? null,
     },
   })
 
@@ -170,6 +172,7 @@ export async function updateInvoiceRow(
       }),
       ...(payload.total !== undefined && { total: payload.total }),
       ...(payload.status !== undefined && { status: payload.status }),
+      ...(payload.file_url !== undefined && { file_url: payload.file_url }),
     },
   })
 

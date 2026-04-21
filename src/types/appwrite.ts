@@ -26,4 +26,5 @@ export type Invoices = Models.Row & {
   total: number
   status: InvoicesStatus
   client_id: Clients
+  file_url: string | null
 }

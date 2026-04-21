@@ -28,6 +28,7 @@ export const createInvoice = actionClient
         vat_amount: parsedInput.vat_amount ?? null,
         total: parsedInput.total,
         status: parsedInput.status,
+        file_url: parsedInput.file_url ?? null,
       })
     )
 
@@ -72,6 +73,7 @@ export const updateInvoice = actionClient
         }),
         ...(fields.total !== undefined && { total: fields.total }),
         ...(fields.status !== undefined && { status: fields.status }),
+        ...(fields.file_url !== undefined && { file_url: fields.file_url }),
       })
     )
 

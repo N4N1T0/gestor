@@ -5,7 +5,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { honoConfig } from "@/features/hono/config"
-import { createAdminClient } from "@/lib/appwrite"
+import { createAdminClient } from "@/lib/appwrite/server"
 import { InvoicesStatus } from "@/types/appwrite"
 import { Query } from "node-appwrite"
 import MetricCard from "./_components/metric-card"

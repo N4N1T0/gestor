@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { honoConfig } from "@/features/hono/config"
-import { createAdminClient } from "@/lib/appwrite"
+import { createAdminClient } from "@/lib/appwrite/server"
 import { Query } from "node-appwrite"
 
 function percentage(value: number, total: number) {
