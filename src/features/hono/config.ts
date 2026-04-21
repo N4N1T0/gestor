@@ -5,5 +5,6 @@ export const honoConfig = {
     databaseId: env.NEXT_APPWRITE_DATABASE_ID,
     clientsTableId: env.NEXT_APPWRITE_CLIENTS_TABLE_ID,
     invoicesTableId: env.NEXT_APPWRITE_INVOICES_TABLE_ID,
+    bucketId: env.NEXT_PUBLIC_BUCKET_ID,
   },
 }
