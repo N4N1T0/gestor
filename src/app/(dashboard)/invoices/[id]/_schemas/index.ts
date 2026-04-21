@@ -14,6 +14,7 @@ const isDueDateBeforeIssueDate = (issueDate: string, dueDate: string) => {
 
 export const createInvoiceSchema = z
   .object({
+    client_id: z.string().min(1, "El cliente es obligatorio"),
     invoice_number: z.string().min(1, "El número de factura es obligatorio"),
     issue_date: z.string().min(1, "La fecha de emisión es obligatoria"),
     due_date: z.string().or(z.literal("")).optional(),
@@ -46,6 +47,7 @@ export const createInvoiceResponseSchema = z.object({
 export const updateInvoiceSchema = z
   .object({
     id: z.string().min(1, "El ID es obligatorio"),
+    client_id: z.string().min(1, "El cliente es obligatorio").optional(),
     invoice_number: z
       .string()
       .min(1, "El número de factura es obligatorio")

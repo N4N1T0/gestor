@@ -18,6 +18,7 @@ export const createInvoice = actionClient
   .action(async ({ parsedInput }) => {
     const [error, data] = await catchError(
       createInvoiceRow({
+        client_id: parsedInput.client_id,
         invoice_number: parsedInput.invoice_number,
         issue_date: parsedInput.issue_date,
         due_date:
@@ -52,6 +53,7 @@ export const updateInvoice = actionClient
 
     const [error, data] = await catchError(
       updateInvoiceRow(id, {
+        ...(fields.client_id !== undefined && { client_id: fields.client_id }),
         ...(fields.invoice_number !== undefined && {
           invoice_number: fields.invoice_number,
         }),
