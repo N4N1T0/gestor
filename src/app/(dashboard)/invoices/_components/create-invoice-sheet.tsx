@@ -40,7 +40,7 @@ import { NavMainItems, NewDataAction } from "@/types"
 import { InvoicesStatus, type Invoices } from "@/types/appwrite"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQueryClient } from "@tanstack/react-query"
-import { formatDate } from "date-fns"
+import { format } from "date-fns"
 import { es } from "date-fns/locale"
 import { CalendarIcon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
@@ -218,7 +218,7 @@ export default function CreateInvoiceSheet({
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value ? (
-                          formatDate(new Date(field.value), "PPP", {
+                          format(new Date(field.value), "PPP", {
                             locale: es,
                           })
                         ) : (
@@ -268,7 +268,7 @@ export default function CreateInvoiceSheet({
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value ? (
-                          formatDate(new Date(field.value), "PPP", {
+                          format(new Date(field.value), "PPP", {
                             locale: es,
                           })
                         ) : (
