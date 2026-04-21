@@ -20,7 +20,7 @@ export const mapInvoiceToSidebarItem = (
     id: invoice.$id,
     slug: invoice.$id,
     title: invoice.invoice_number,
-    meta: invoice.status,
+    meta: invoice.client_id?.name,
     description: invoice.description ?? "",
   }
 }
