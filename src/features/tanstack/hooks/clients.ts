@@ -41,6 +41,7 @@ const fetchClientById = async (id: string): Promise<Clients> => {
   return response.json()
 }
 
+// HOOKS
 export const useGetClients = ({ enabled }: GetClients) => {
   return useQuery({
     queryKey: tanstackKeys.clients,
