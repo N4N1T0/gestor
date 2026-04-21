@@ -33,6 +33,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
+import { useGetClients } from "@/features/tanstack/hooks/clients"
 import { tanstackKeys } from "@/features/tanstack/keys"
 import { useCreateNewData } from "@/hooks/use-create-new-data"
 import { cn } from "@/lib/utils"
@@ -54,6 +55,7 @@ interface CreateInvoiceSheetProps {
 }
 
 const EMPTY_FORM_VALUES: CreateInvoiceSchema = {
+  client_id: "",
   invoice_number: "",
   issue_date: "",
   due_date: "",
@@ -116,6 +118,11 @@ export default function CreateInvoiceSheet({
 
   // COMPUTED
   const isOpen = newData === NavMainItems.INVOICES
+  const {
+    data: clients = [],
+    isPending: isClientsPending,
+    isError: isClientsError,
+  } = useGetClients({ enabled: isOpen })
   const isExecuting = isCreating || isUpdating
   const isDisabled = isExecuting || formState.isSubmitting
 
@@ -124,6 +131,10 @@ export default function CreateInvoiceSheet({
 
     if (isEditing && invoice) {
       reset({
+        client_id:
+          typeof invoice.client_id === "string"
+            ? invoice.client_id
+            : (invoice.client_id?.$id ?? ""),
         invoice_number: invoice.invoice_number ?? "",
         issue_date: invoice.issue_date ?? "",
         due_date: invoice.due_date ?? "",
@@ -171,6 +182,49 @@ export default function CreateInvoiceSheet({
 
         <form className="flex h-full flex-col gap-4 p-4" onSubmit={onSubmit}>
           <FieldGroup>
+            <Controller
+              name="client_id"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="invoice-client" required>
+                    Cliente
+                  </FieldLabel>
+                  <Select
+                    aria-invalid={fieldState.invalid}
+                    disabled={isDisabled || isClientsPending}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger id="invoice-client">
+                      <SelectValue
+                        placeholder={
+                          isClientsPending
+                            ? "Cargando clientes..."
+                            : "Selecciona un cliente"
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {clients.map((client) => (
+                        <SelectItem key={client.id} value={client.id}>
+                          {client.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {isClientsError && (
+                    <p className="text-destructive text-xs">
+                      No se pudieron cargar los clientes
+                    </p>
+                  )}
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
             <Controller
               name="invoice_number"
               control={control}
