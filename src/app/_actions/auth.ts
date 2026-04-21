@@ -1,6 +1,6 @@
 "use server"
 
-import { createAdminClient, createSessionClient } from "@/lib/appwrite"
+import { createAdminClient, createSessionClient } from "@/lib/appwrite/server"
 import { actionClient } from "@/lib/next-safe-actions"
 import { catchError } from "@/lib/utils"
 import { AppwriteException } from "appwrite"

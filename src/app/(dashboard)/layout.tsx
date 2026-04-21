@@ -1,6 +1,6 @@
 import { AppSidebar } from "@/app/(dashboard)/_components/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { getLoggedInUser } from "@/lib/appwrite"
+import { getLoggedInUser } from "@/lib/appwrite/server"
 import { redirect } from "next/navigation"
 import MainHeader from "./_components/main-header"
 

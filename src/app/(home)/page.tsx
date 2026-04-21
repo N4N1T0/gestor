@@ -1,5 +1,5 @@
 import { images } from "@/assets"
-import { getLoggedInUser } from "@/lib/appwrite"
+import { getLoggedInUser } from "@/lib/appwrite/server"
 import { GalleryVerticalEndIcon } from "lucide-react"
 import Image from "next/image"
 import { redirect } from "next/navigation"
