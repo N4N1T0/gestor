@@ -1,5 +1,5 @@
 import { createClientRow, fetchClients, getClientById } from "@/lib/api"
-import { SecondSidebarCardData } from "@/types"
+import { mapClientToSidebarItem } from "@/lib/second-sidebar-mappers"
 import { Clients } from "@/types/appwrite"
 import { Hono } from "hono"
 
@@ -11,7 +11,7 @@ clientsRoute
       const data = await fetchClients()
 
       const clients = data.map((row) => {
-        return mapClientToListItem(row)
+        return mapClientToSidebarItem(row)
       })
 
       return c.json(clients)
@@ -47,16 +47,5 @@ clientsRoute
       return c.json({ error: "Unable to create client" }, 500)
     }
   })
-
-// HELPER FUNCTIONS
-const mapClientToListItem = (client: Clients): SecondSidebarCardData => {
-  return {
-    id: client.$id,
-    slug: client.$id,
-    title: client.name,
-    meta: client.tax_id ?? "",
-    description: client.address ?? "",
-  }
-}
 
 export default clientsRoute
