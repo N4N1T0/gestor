@@ -4,9 +4,9 @@ import { CreateNewDataBtn } from "@/app/(dashboard)/_components/create-new-data-
 import { Skeleton } from "@/components/ui/skeleton"
 import { useGetClientById } from "@/features/tanstack/hooks/clients"
 import { NavMainItems, NewDataAction } from "@/types"
+import CreateClientSheet from "@dashboard/clients/_components/create-client-sheet"
 import ClientContactCard from "./client-contact-card"
 import ClientIdentityCard from "./client-identity-card"
-import CreateClientSheet from "./create-client-sheet"
 
 interface ClientPageProps {
   id: string
