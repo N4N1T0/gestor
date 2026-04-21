@@ -21,7 +21,7 @@ export const CreateNewDataBtn = ({
 }: CreateNewDataBtnProps) => {
   const { setNewData } = useCreateNewData()
 
-  const formattedDataSource = dataSource.toLowerCase().replace("s", "")
+  const formattedDataSource = dataSource.toLowerCase().replace(/s$/, "")
 
   const handleClick = () => {
     setNewData(dataSource, action)
