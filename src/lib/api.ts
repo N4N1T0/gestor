@@ -81,11 +81,11 @@ export async function createClientRow(
 export async function fetchInvoices(): Promise<Invoices[]> {
   const { tablesDB } = await createAdminClient()
 
-  const rows = await tablesDB.listRows({
+  const rows = await tablesDB.listRows<Invoices>({
     databaseId: honoConfig.appwrite.databaseId,
     tableId: honoConfig.appwrite.invoicesTableId,
     queries: [Query.limit(50)],
   })
 
-  return rows.rows as unknown as Invoices[]
+  return rows.rows
 }
