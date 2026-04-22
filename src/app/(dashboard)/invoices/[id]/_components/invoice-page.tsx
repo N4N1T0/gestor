@@ -6,6 +6,8 @@ import { useGetInvoiceById } from "@/features/tanstack/hooks/invoices"
 import { getFilePreviewUrl } from "@/lib/appwrite/client"
 import { NavMainItems, NewDataAction } from "@/types"
 import CreateInvoiceSheet from "@dashboard/invoices/_components/create-invoice-sheet"
+import { useState } from "react"
+import DeleteInvoiceAlertDialog from "./delete-invoice-alert-dialog"
 import InvoiceFilePreviewCard from "./invoice-file-preview-card"
 import InvoiceFinancialCard from "./invoice-financial-card"
 import InvoiceMainCard from "./invoice-main-card"
@@ -15,6 +17,8 @@ interface InvoicePageProps {
 }
 
 export default function InvoicePage({ id }: InvoicePageProps) {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+
   const {
     data: invoice,
     isPending,
@@ -64,10 +68,18 @@ export default function InvoicePage({ id }: InvoicePageProps) {
           </p>
         </div>
 
-        <CreateNewDataBtn
-          dataSource={NavMainItems.INVOICES}
-          action={NewDataAction.EDIT}
-        />
+        <div className="flex items-center gap-2">
+          <DeleteInvoiceAlertDialog
+            invoice={invoice}
+            isOpen={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+          />
+
+          <CreateNewDataBtn
+            dataSource={NavMainItems.INVOICES}
+            action={NewDataAction.EDIT}
+          />
+        </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
