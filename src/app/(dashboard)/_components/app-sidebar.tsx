@@ -13,12 +13,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { navMain } from "@/data/config"
-import { getActiveNavItemByPathname } from "@/lib/utils"
 import { Euro } from "lucide-react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
 import { Models } from "node-appwrite"
-import { ComponentProps } from "react"
+import { ComponentProps, useState } from "react"
 import SecondSidebar from "./second-sidebar"
 
 interface AppSidebarProps extends ComponentProps<typeof Sidebar> {
@@ -26,14 +24,7 @@ interface AppSidebarProps extends ComponentProps<typeof Sidebar> {
 }
 
 export function AppSidebar({ user, ...props }: AppSidebarProps) {
-  const route = useRouter()
-  const pathname = usePathname()
-
-  const activeItem = getActiveNavItemByPathname(pathname, navMain)
-
-  const handleNavItemClick = (item: (typeof navMain)[0]) => {
-    route.push(item.url)
-  }
+  const [activeItem, setActiveItem] = useState<(typeof navMain)[0]>(navMain[0])
 
   return (
     <Sidebar
@@ -69,8 +60,8 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
                         children: item.title,
                         hidden: false,
                       }}
-                      onClick={() => handleNavItemClick(item)}
                       isActive={activeItem?.title === item.title}
+                      onClick={() => setActiveItem(item)}
                       className="px-2.5 md:px-2"
                     >
                       {item.icon}

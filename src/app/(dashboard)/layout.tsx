@@ -2,7 +2,6 @@ import { AppSidebar } from "@/app/(dashboard)/_components/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { getLoggedInUser } from "@/lib/appwrite/server"
 import { redirect } from "next/navigation"
-import MainHeader from "./_components/main-header"
 
 export default async function DashboardLayout({
   children,
@@ -23,8 +22,6 @@ export default async function DashboardLayout({
     >
       <AppSidebar user={user} />
       <SidebarInset>
-        <MainHeader />
-
         <main className="flex-1">{children}</main>
       </SidebarInset>
     </SidebarProvider>
