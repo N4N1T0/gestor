@@ -1,4 +1,9 @@
-import { BreadcrumbItemData, NavMainItem, SecondSidebarCardData } from "@/types"
+import {
+  BreadcrumbItemData,
+  NavMainItem,
+  SecondSidebarCardData,
+  SupportedFileType,
+} from "@/types"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -111,4 +116,121 @@ export const filterSearchData = (
 
     return name.includes(needle) || email.includes(needle)
   })
+}
+
+/** Utility function to determine the supported file type based on a given MIME type string.
+ * It checks if the MIME type corresponds to a PDF or an image format and returns the appropriate SupportedFileType.
+ * If the MIME type is null or does not match any supported formats, it returns "unsupported".
+ * Example usage:
+ * getFileTypeFromMime("application/pdf") // returns "pdf"
+ * getFileTypeFromMime("image/jpeg") // returns "image"
+ * getFileTypeFromMime("text/plain") // returns "unsupported"
+ */
+export const getFileTypeFromMime = (
+  mimeType: string | null
+): SupportedFileType => {
+  if (!mimeType) return "unsupported"
+
+  if (mimeType.includes("application/pdf")) {
+    return "pdf"
+  }
+
+  if (mimeType.startsWith("image/")) {
+    return "image"
+  }
+
+  return "unsupported"
+}
+
+/** Utility function to handle file downloads in the browser.
+ * It takes the current downloading state, the file URL, and state setters for downloading and error handling.
+ * If a download is already in progress or the file URL is null, it does nothing.
+ * Otherwise, it fetches the file, creates a temporary anchor element to trigger the download, and handles any errors that may occur during the process.
+ * Example usage:
+ * handleDownload(isDownloading, filePreviewUrl, setIsDownloading, setHasError)
+ * This will initiate a download of the file at filePreviewUrl if not already downloading, and update the state accordingly.
+ */
+export const handleDownload = async (
+  isDownloading: boolean,
+  filePreviewUrl: string | null,
+  setIsDownloading: (value: boolean) => void,
+  setHasError: (value: boolean) => void
+) => {
+  if (!filePreviewUrl || isDownloading) return
+
+  setIsDownloading(true)
+
+  try {
+    const response = await fetch(filePreviewUrl)
+
+    if (!response.ok) {
+      throw new Error("No se pudo descargar el archivo")
+    }
+
+    const blob = await response.blob()
+    const downloadUrl = URL.createObjectURL(blob)
+    const extension = blob.type.includes("pdf") ? "pdf" : "bin"
+    const fileName = `factura-adjunta.${extension}`
+
+    const anchor = document.createElement("a")
+    anchor.href = downloadUrl
+    anchor.download = fileName
+    document.body.appendChild(anchor)
+    anchor.click()
+    anchor.remove()
+    URL.revokeObjectURL(downloadUrl)
+  } catch {
+    setHasError(true)
+  } finally {
+    setIsDownloading(false)
+  }
+}
+
+/** Utility function to detect the MIME type of a file from its preview URL.
+ * It first attempts a `HEAD` request to read the `content-type` header and falls back
+ * to a `GET` request when the header is unavailable or the `HEAD` request fails.
+ * If the operation has not been cancelled, it updates loading, error, and MIME type state.
+ */
+export const detectMimeType = async (
+  setIsLoading: (value: boolean) => void,
+  setHasError: (value: boolean) => void,
+  setMimeType: (value: string | null) => void,
+  filePreviewUrl: string,
+  cancelled: boolean
+) => {
+  setIsLoading(true)
+  setHasError(false)
+
+  try {
+    const headResponse = await fetch(filePreviewUrl, {
+      method: "HEAD",
+    })
+
+    let contentType = headResponse.headers.get("content-type")
+
+    if ((!headResponse.ok || !contentType) && !cancelled) {
+      const fallbackResponse = await fetch(filePreviewUrl)
+
+      if (!fallbackResponse.ok) {
+        throw new Error("No se pudo leer el archivo")
+      }
+
+      contentType =
+        fallbackResponse.headers.get("content-type") ||
+        (await fallbackResponse.blob()).type ||
+        null
+    }
+
+    if (!cancelled) {
+      setMimeType(contentType)
+    }
+  } catch {
+    if (!cancelled) {
+      setHasError(true)
+    }
+  } finally {
+    if (!cancelled) {
+      setIsLoading(false)
+    }
+  }
 }

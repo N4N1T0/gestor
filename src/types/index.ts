@@ -34,3 +34,5 @@ export enum NewDataAction {
   CREATE = "create",
   EDIT = "edit",
 }
+
+export type SupportedFileType = "pdf" | "image" | "unsupported"
