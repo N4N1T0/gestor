@@ -1,6 +1,11 @@
 "use server"
 
-import { createInvoiceRow, updateInvoiceRow } from "@/lib/api"
+import {
+  createInvoiceRow,
+  deleteInvoiceRow,
+  getInvoiceById,
+  updateInvoiceRow,
+} from "@/lib/api"
 import { actionClient } from "@/lib/next-safe-actions"
 import { catchError } from "@/lib/utils"
 import { AppwriteException } from "appwrite"
@@ -8,6 +13,8 @@ import { AppwriteException } from "appwrite"
 import {
   createInvoiceResponseSchema,
   createInvoiceSchema,
+  deleteInvoiceResponseSchema,
+  deleteInvoiceSchema,
   updateInvoiceResponseSchema,
   updateInvoiceSchema,
 } from "../_schemas"
@@ -87,6 +94,46 @@ export const updateInvoice = actionClient
 
     return {
       id: data.$id,
+      success: true,
+    }
+  })
+
+export const deleteInvoice = actionClient
+  .inputSchema(deleteInvoiceSchema)
+  .outputSchema(deleteInvoiceResponseSchema)
+  .action(async ({ parsedInput }) => {
+    const [invoiceError, invoice] = await catchError(
+      getInvoiceById(parsedInput.id)
+    )
+
+    if (invoiceError) {
+      if (invoiceError instanceof AppwriteException) {
+        throw new Error(invoiceError.message ?? "No se pudo validar la factura")
+      }
+
+      throw new Error(invoiceError.message ?? "Ocurrió un error inesperado")
+    }
+
+    if (!invoice) {
+      throw new Error("La factura no existe")
+    }
+
+    if (invoice.invoice_number !== parsedInput.confirmation_name) {
+      throw new Error("El número de factura no coincide")
+    }
+
+    const [deleteError, id] = await catchError(deleteInvoiceRow(parsedInput.id))
+
+    if (deleteError) {
+      if (deleteError instanceof AppwriteException) {
+        throw new Error(deleteError.message ?? "No se pudo eliminar la factura")
+      }
+
+      throw new Error(deleteError.message ?? "Ocurrió un error inesperado")
+    }
+
+    return {
+      id,
       success: true,
     }
   })

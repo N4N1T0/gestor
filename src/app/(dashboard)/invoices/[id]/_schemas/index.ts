@@ -93,5 +93,29 @@ export const updateInvoiceResponseSchema = z.object({
   success: z.boolean(),
 })
 
+export const deleteInvoiceSchema = z
+  .object({
+    id: z.string().min(1, "El ID es obligatorio"),
+    invoice_number: z.string().min(1, "El número de factura es obligatorio"),
+    confirmation_name: z
+      .string()
+      .min(1, "Debes escribir el número de factura para confirmar"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.invoice_number !== data.confirmation_name) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["confirmation_name"],
+        message: "El número de factura no coincide",
+      })
+    }
+  })
+
+export const deleteInvoiceResponseSchema = z.object({
+  id: z.string(),
+  success: z.boolean(),
+})
+
 export type CreateInvoiceSchema = z.infer<typeof createInvoiceSchema>
 export type UpdateInvoiceSchema = z.infer<typeof updateInvoiceSchema>
+export type DeleteInvoiceSchema = z.infer<typeof deleteInvoiceSchema>

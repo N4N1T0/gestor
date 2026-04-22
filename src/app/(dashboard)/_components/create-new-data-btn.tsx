@@ -30,11 +30,11 @@ export const CreateNewDataBtn = ({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button type="button" onClick={handleClick}>
+        <Button type="button" size="icon" onClick={handleClick}>
           {action === "create" ? <Plus /> : <PencilLine />}
         </Button>
       </TooltipTrigger>
-      <TooltipContent side="right">
+      <TooltipContent side="top">
         {action === "create"
           ? `Crear nuevo ${formattedDataSource}`
           : `Editar ${formattedDataSource}`}
