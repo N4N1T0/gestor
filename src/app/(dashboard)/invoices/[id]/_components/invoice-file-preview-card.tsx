@@ -107,21 +107,37 @@ export default function InvoiceFilePreviewCard({
     dispatch({ type: "setPdfWidth", payload: value })
   }
 
+  const mimeTypeDetectionRequestRef = useRef(0)
+
   useEffect(() => {
     if (!filePreviewUrl) return
 
-    let cancelled = false
+    const requestId = ++mimeTypeDetectionRequestRef.current
 
     void detectMimeType(
-      setIsLoading,
-      setHasError,
-      setMimeType,
+      (value: boolean) => {
+        if (mimeTypeDetectionRequestRef.current === requestId) {
+          setIsLoading(value)
+        }
+      },
+      (value: boolean) => {
+        if (mimeTypeDetectionRequestRef.current === requestId) {
+          setHasError(value)
+        }
+      },
+      (value) => {
+        if (mimeTypeDetectionRequestRef.current === requestId) {
+          setMimeType(value)
+        }
+      },
       filePreviewUrl,
-      cancelled
+      false
     )
 
     return () => {
-      cancelled = true
+      if (mimeTypeDetectionRequestRef.current === requestId) {
+        mimeTypeDetectionRequestRef.current += 1
+      }
     }
   }, [filePreviewUrl])
 
