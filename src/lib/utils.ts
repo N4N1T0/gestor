@@ -186,14 +186,10 @@ export const handleDownload = async (
   }
 }
 
-/** Utility function to generate a preview URL for a given file URL.
- * It checks if the file URL is from Google Drive and transforms it into a direct preview link.
- * For other URLs, it returns the original URL as the preview link.
- * Example usage:
- * getFilePreviewUrl("https://drive.google.com/file/d/FILE_ID/view?usp=sharing")
- * // returns "https://drive.google.com/uc?export=view&id=FILE_ID"
- * getFilePreviewUrl("https://example.com/file.pdf")
- * // returns "https://example.com/file.pdf"
+/** Utility function to detect the MIME type of a file from its preview URL.
+ * It first attempts a `HEAD` request to read the `content-type` header and falls back
+ * to a `GET` request when the header is unavailable or the `HEAD` request fails.
+ * If the operation has not been cancelled, it updates loading, error, and MIME type state.
  */
 export const detectMimeType = async (
   setIsLoading: (value: boolean) => void,
