@@ -178,3 +178,15 @@ export async function updateInvoiceRow(
 
   return row as unknown as Invoices
 }
+
+export async function deleteInvoiceRow(id: string): Promise<string> {
+  const { tablesDB } = await createAdminClient()
+
+  await tablesDB.deleteRow({
+    databaseId: honoConfig.appwrite.databaseId,
+    tableId: honoConfig.appwrite.invoicesTableId,
+    rowId: id,
+  })
+
+  return id
+}
