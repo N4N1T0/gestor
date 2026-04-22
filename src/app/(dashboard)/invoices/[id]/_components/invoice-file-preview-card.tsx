@@ -19,10 +19,7 @@ import Link from "next/link"
 import { useEffect, useReducer, useRef } from "react"
 import { Document, Page, pdfjs } from "react-pdf"
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString()
+pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.min.mjs"
 
 interface InvoiceFilePreviewCardProps {
   filePreviewUrl: string | null
@@ -147,7 +144,6 @@ export default function InvoiceFilePreviewCard({
     if (!container) return
 
     const updateWidth = () => {
-      // Keep a small gutter inside the bordered preview box.
       const nextWidth = Math.max(Math.floor(container.clientWidth) - 16, 240)
       setPdfWidth(nextWidth)
     }
