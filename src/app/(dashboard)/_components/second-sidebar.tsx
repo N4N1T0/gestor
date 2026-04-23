@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useGetClients } from "@/features/tanstack/hooks/clients"
+import { useGetExpenses } from "@/features/tanstack/hooks/expenses"
 import { useGetInvoices } from "@/features/tanstack/hooks/invoices"
 import { useDataSearch } from "@/hooks/use-data-search"
 import { filterSearchData } from "@/lib/utils"
@@ -25,6 +26,7 @@ interface SecondSidebarProps {
 export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
   const { search, setSearch } = useDataSearch()
   const isClientsSection = activeItem?.url === "/clients"
+  const isExpensesSection = activeItem?.url === "/expenses"
   const isInvoicesSection = activeItem?.url === "/invoices"
 
   const {
@@ -37,6 +39,15 @@ export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
   })
 
   const {
+    data: expenses = [],
+    error: expensesError,
+    isError: isExpensesError,
+    isLoading: isExpensesLoading,
+  } = useGetExpenses({
+    enabled: isExpensesSection,
+  })
+
+  const {
     data: invoices = [],
     error: invoicesError,
     isError: isInvoicesError,
@@ -46,24 +57,43 @@ export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
   })
 
   const data = useMemo(() => {
-    return isClientsSection ? clients : isInvoicesSection ? invoices : []
-  }, [clients, invoices, isClientsSection, isInvoicesSection])
+    return isClientsSection
+      ? clients
+      : isInvoicesSection
+        ? invoices
+        : isExpensesSection
+          ? expenses
+          : []
+  }, [
+    clients,
+    expenses,
+    invoices,
+    isClientsSection,
+    isExpensesSection,
+    isInvoicesSection,
+  ])
 
   const isLoading = isClientsSection
     ? isClientsLoading
     : isInvoicesSection
       ? isInvoicesLoading
-      : false
+      : isExpensesSection
+        ? isExpensesLoading
+        : false
   const isError = isClientsSection
     ? isClientsError
     : isInvoicesSection
       ? isInvoicesError
-      : false
+      : isExpensesSection
+        ? isExpensesError
+        : false
   const error = isClientsSection
     ? clientsError
     : isInvoicesSection
       ? invoicesError
-      : null
+      : isExpensesSection
+        ? expensesError
+        : null
 
   // COMPUTED
   const filteredItems = useMemo(
@@ -95,31 +125,33 @@ export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
       <SidebarContent>
         <SidebarGroup className="px-0">
           <SidebarGroupContent>
-            {!isClientsSection && !isInvoicesSection && (
+            {!isClientsSection && !isInvoicesSection && !isExpensesSection && (
               <div className="p-4 text-sm text-muted-foreground">
                 No data source configured for this section yet.
               </div>
             )}
 
-            {(isClientsSection || isInvoicesSection) && isLoading && (
-              <div className="space-y-0">
-                {Array.from({ length: 4 }).map((_, index) => (
-                  <div key={index} className="border-b p-4 last:border-b-0">
-                    <Skeleton className="mb-2 h-4 w-1/2" />
-                    <Skeleton className="mb-2 h-3 w-3/4" />
-                    <Skeleton className="h-3 w-2/3" />
-                  </div>
-                ))}
-              </div>
-            )}
+            {(isClientsSection || isInvoicesSection || isExpensesSection) &&
+              isLoading && (
+                <div className="space-y-0">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <div key={index} className="border-b p-4 last:border-b-0">
+                      <Skeleton className="mb-2 h-4 w-1/2" />
+                      <Skeleton className="mb-2 h-3 w-3/4" />
+                      <Skeleton className="h-3 w-2/3" />
+                    </div>
+                  ))}
+                </div>
+              )}
 
-            {(isClientsSection || isInvoicesSection) && isError && (
-              <div className="p-4 text-sm text-destructive">
-                {(error as Error).message || "Error loading data."}
-              </div>
-            )}
+            {(isClientsSection || isInvoicesSection || isExpensesSection) &&
+              isError && (
+                <div className="p-4 text-sm text-destructive">
+                  {(error as Error).message || "Error loading data."}
+                </div>
+              )}
 
-            {(isClientsSection || isInvoicesSection) &&
+            {(isClientsSection || isInvoicesSection || isExpensesSection) &&
               !isLoading &&
               !isError &&
               filteredItems.length === 0 && (
@@ -128,7 +160,7 @@ export default function SecondSidebar({ activeItem }: SecondSidebarProps) {
                 </div>
               )}
 
-            {(isClientsSection || isInvoicesSection) &&
+            {(isClientsSection || isInvoicesSection || isExpensesSection) &&
               !isLoading &&
               !isError &&
               filteredItems.map((item) => (
