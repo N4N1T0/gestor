@@ -8,7 +8,7 @@ import {
 } from "@/lib/api"
 import { actionClient } from "@/lib/next-safe-actions"
 import { catchError } from "@/lib/utils"
-import { AppwriteException } from "appwrite"
+import { AppwriteException } from "node-appwrite"
 
 import {
   createExpenseResponseSchema,
