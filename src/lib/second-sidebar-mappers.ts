@@ -1,5 +1,5 @@
 import { SecondSidebarCardData } from "@/types"
-import { Clients, Invoices } from "@/types/appwrite"
+import { Clients, Expenses, Invoices } from "@/types/appwrite"
 
 export const mapClientToSidebarItem = (
   client: Clients
@@ -22,5 +22,17 @@ export const mapInvoiceToSidebarItem = (
     title: invoice.invoice_number,
     meta: invoice.client_id?.name,
     description: invoice.description ?? "",
+  }
+}
+
+export const mapExpenseToSidebarItem = (
+  expense: Expenses
+): SecondSidebarCardData => {
+  return {
+    id: expense.$id,
+    slug: expense.$id,
+    title: expense.description,
+    meta: expense.category,
+    description: expense.notes ?? "",
   }
 }

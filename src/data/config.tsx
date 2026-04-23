@@ -27,3 +27,19 @@ export const navMain: NavMainItem[] = [
     isActive: false,
   },
 ]
+
+export const expensesTypes = [
+  "hardware",
+  "software",
+  "internet",
+  "office_home",
+  "transport",
+  "meals",
+  "education",
+  "professional_services",
+  "coworking",
+  "financial",
+  "marketing",
+  "insurance",
+  "other",
+]
