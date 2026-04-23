@@ -21,11 +21,11 @@ import { Document, Page, pdfjs } from "react-pdf"
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
-interface InvoiceFilePreviewCardProps {
+interface ExpenseFilePreviewCardProps {
   filePreviewUrl: string | null
 }
 
-interface InvoiceFilePreviewState {
+interface ExpenseFilePreviewState {
   mimeType: string | null
   isLoading: boolean
   isDownloading: boolean
@@ -34,7 +34,7 @@ interface InvoiceFilePreviewState {
   pdfWidth: number
 }
 
-type InvoiceFilePreviewAction =
+type ExpenseFilePreviewAction =
   | { type: "setMimeType"; payload: string | null }
   | { type: "setIsLoading"; payload: boolean }
   | { type: "setIsDownloading"; payload: boolean }
@@ -42,7 +42,7 @@ type InvoiceFilePreviewAction =
   | { type: "setPdfPages"; payload: number }
   | { type: "setPdfWidth"; payload: number }
 
-const initialState: InvoiceFilePreviewState = {
+const initialState: ExpenseFilePreviewState = {
   mimeType: null,
   isLoading: false,
   isDownloading: false,
@@ -51,10 +51,10 @@ const initialState: InvoiceFilePreviewState = {
   pdfWidth: 600,
 }
 
-function invoiceFilePreviewReducer(
-  state: InvoiceFilePreviewState,
-  action: InvoiceFilePreviewAction
-): InvoiceFilePreviewState {
+function expenseFilePreviewReducer(
+  state: ExpenseFilePreviewState,
+  action: ExpenseFilePreviewAction
+): ExpenseFilePreviewState {
   switch (action.type) {
     case "setMimeType":
       return { ...state, mimeType: action.payload }
@@ -73,10 +73,10 @@ function invoiceFilePreviewReducer(
   }
 }
 
-export default function InvoiceFilePreviewCard({
+export default function ExpenseFilePreviewCard({
   filePreviewUrl,
-}: InvoiceFilePreviewCardProps) {
-  const [state, dispatch] = useReducer(invoiceFilePreviewReducer, initialState)
+}: ExpenseFilePreviewCardProps) {
+  const [state, dispatch] = useReducer(expenseFilePreviewReducer, initialState)
   const pdfContainerRef = useRef<HTMLDivElement | null>(null)
   const fileType = getFileTypeFromMime(state.mimeType)
 
@@ -230,7 +230,7 @@ export default function InvoiceFilePreviewCard({
                 filePreviewUrl,
                 setIsDownloading,
                 setHasError,
-                "factura-adjunta"
+                "gastos-adjunta"
               )
             }
             disabled={state.isDownloading}
@@ -253,7 +253,7 @@ export default function InvoiceFilePreviewCard({
           </Link>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4" id="invoice-file-preview-card">
+      <CardContent className="space-y-4" id="expense-file-preview-card">
         {fileType === "pdf" && (
           <div
             ref={pdfContainerRef}
@@ -287,7 +287,7 @@ export default function InvoiceFilePreviewCard({
           <div className="overflow-hidden rounded-md border bg-muted/20">
             <img
               src={filePreviewUrl}
-              alt="Vista previa del archivo de la factura"
+              alt="Vista previa del archivo adjunto del gasto"
               className="h-auto max-h-180 w-full object-contain"
             />
           </div>

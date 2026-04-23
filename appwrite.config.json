@@ -201,6 +201,102 @@
                 }
             ],
             "indexes": []
+        },
+        {
+            "$id": "expenses",
+            "$permissions": [],
+            "databaseId": "69e4d5a20031673b27e7",
+            "name": "expenses",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "date",
+                    "type": "datetime",
+                    "required": true,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "supplier_id",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "description",
+                    "type": "text",
+                    "required": true,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "category",
+                    "type": "varchar",
+                    "required": true,
+                    "array": false,
+                    "size": 50,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "amount",
+                    "type": "double",
+                    "required": true,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "vat_rate",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "vat_amount",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "total",
+                    "type": "double",
+                    "required": true,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "receipt_url",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "notes",
+                    "type": "text",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "encrypt": false
+                }
+            ],
+            "indexes": []
         }
     ]
 }

@@ -78,6 +78,7 @@ export default function CreateInvoiceSheet({
   const [file, setFile] = useState<File | null>(null)
   const { newData, newDataAction, clearNewData } = useCreateNewData()
   const isEditing = Boolean(invoice) && newDataAction === NewDataAction.EDIT
+  const isCreating = !Boolean(invoice) && newDataAction === NewDataAction.CREATE
   const { handleSubmit, reset, formState, control } =
     useForm<CreateInvoiceSchema>({
       resolver: zodResolver(createInvoiceSchema as never),
@@ -86,7 +87,7 @@ export default function CreateInvoiceSheet({
     })
 
   // ACTIONS
-  const { execute: executeCreate, isExecuting: isCreating } = useAction(
+  const { execute: executeCreate, isExecuting: isExecutingCreate } = useAction(
     createInvoice,
     {
       onSuccess: () => {
@@ -102,7 +103,7 @@ export default function CreateInvoiceSheet({
     }
   )
 
-  const { execute: executeUpdate, isExecuting: isUpdating } = useAction(
+  const { execute: executeUpdate, isExecuting: isExecutingUpdate } = useAction(
     updateInvoice,
     {
       onSuccess: () => {
@@ -124,13 +125,13 @@ export default function CreateInvoiceSheet({
   )
 
   // COMPUTED
-  const isOpen = newData === NavMainItems.INVOICES
+  const isOpen = newData === NavMainItems.INVOICES && (isEditing || isCreating)
   const {
     data: clients = [],
     isPending: isClientsPending,
     isError: isClientsError,
   } = useGetClients({ enabled: isOpen })
-  const isExecuting = isCreating || isUpdating
+  const isExecuting = isExecutingCreate || isExecutingUpdate
   const isDisabled = isExecuting || formState.isSubmitting
 
   useEffect(() => {

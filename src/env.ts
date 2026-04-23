@@ -14,6 +14,7 @@ const commonEnv = z.object({
   NEXT_APPWRITE_DATABASE_ID: z.string(),
   NEXT_APPWRITE_CLIENTS_TABLE_ID: z.string(),
   NEXT_APPWRITE_INVOICES_TABLE_ID: z.string(),
+  NEXT_APPWRITE_EXPENSES_TABLE_ID: z.string(),
   NEXT_PUBLIC_BUCKET_ID: z.string(),
 })
 

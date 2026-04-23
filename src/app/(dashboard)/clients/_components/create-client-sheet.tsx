@@ -50,6 +50,7 @@ export default function CreateClientSheet({ client }: CreateClientSheetProps) {
   // STATE
   const { newData, newDataAction, clearNewData } = useCreateNewData()
   const isEditing = Boolean(client) && newDataAction === NewDataAction.EDIT
+  const isCreating = !Boolean(client) && newDataAction === NewDataAction.CREATE
   const { handleSubmit, reset, formState, control } =
     useForm<CreateClientSchema>({
       resolver: zodResolver(createClientSchema as never),
@@ -57,7 +58,7 @@ export default function CreateClientSheet({ client }: CreateClientSheetProps) {
     })
 
   // ACTIONS
-  const { execute: executeCreate, isExecuting: isCreating } = useAction(
+  const { execute: executeCreate, isExecuting: isExecutingCreate } = useAction(
     createClient,
     {
       onSuccess: () => {
@@ -74,7 +75,7 @@ export default function CreateClientSheet({ client }: CreateClientSheetProps) {
     }
   )
 
-  const { execute: executeUpdate, isExecuting: isUpdating } = useAction(
+  const { execute: executeUpdate, isExecuting: isExecutingUpdate } = useAction(
     updateClient,
     {
       onSuccess: () => {
@@ -97,8 +98,8 @@ export default function CreateClientSheet({ client }: CreateClientSheetProps) {
   )
 
   // COMPUTED
-  const isOpen = newData === NavMainItems.CLIENTS
-  const isExecuting = isCreating || isUpdating
+  const isOpen = newData === NavMainItems.CLIENTS && (isEditing || isCreating)
+  const isExecuting = isExecutingCreate || isExecutingUpdate
   const isDisabled = isExecuting || formState.isSubmitting
 
   useEffect(() => {

@@ -154,7 +154,8 @@ export const handleDownload = async (
   isDownloading: boolean,
   filePreviewUrl: string | null,
   setIsDownloading: (value: boolean) => void,
-  setHasError: (value: boolean) => void
+  setHasError: (value: boolean) => void,
+  name: string
 ) => {
   if (!filePreviewUrl || isDownloading) return
 
@@ -170,7 +171,7 @@ export const handleDownload = async (
     const blob = await response.blob()
     const downloadUrl = URL.createObjectURL(blob)
     const extension = blob.type.includes("pdf") ? "pdf" : "bin"
-    const fileName = `factura-adjunta.${extension}`
+    const fileName = `${name}.${extension}`
 
     const anchor = document.createElement("a")
     anchor.href = downloadUrl
