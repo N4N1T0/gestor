@@ -68,6 +68,7 @@ export default function CreateExpenseSheet({
   const [file, setFile] = useState<File | null>(null)
   const { newData, newDataAction, clearNewData } = useCreateNewData()
   const isEditing = Boolean(expense) && newDataAction === NewDataAction.EDIT
+  const isCreating = !Boolean(expense) && newDataAction === NewDataAction.CREATE
   const { handleSubmit, reset, formState, control } =
     useForm<CreateExpenseSchema>({
       resolver: zodResolver(createExpenseSchema as never),
@@ -76,7 +77,7 @@ export default function CreateExpenseSheet({
     })
 
   // ACTIONS
-  const { execute: executeCreate, isExecuting: isCreating } = useAction(
+  const { execute: executeCreate, isExecuting: isExecutingCreate } = useAction(
     createExpense,
     {
       onSuccess: () => {
@@ -92,7 +93,7 @@ export default function CreateExpenseSheet({
     }
   )
 
-  const { execute: executeUpdate, isExecuting: isUpdating } = useAction(
+  const { execute: executeUpdate, isExecuting: isExecutingUpdate } = useAction(
     updateExpense,
     {
       onSuccess: () => {
@@ -115,8 +116,8 @@ export default function CreateExpenseSheet({
   )
 
   // COMPUTED
-  const isOpen = newData === NavMainItems.EXPENSES
-  const isExecuting = isCreating || isUpdating
+  const isOpen = newData === NavMainItems.EXPENSES && (isEditing || isCreating)
+  const isExecuting = isExecutingCreate || isExecutingUpdate
   const isDisabled = isExecuting || formState.isSubmitting
 
   useEffect(() => {
