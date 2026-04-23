@@ -28,3 +28,16 @@ export type Invoices = Models.Row & {
   client_id: Clients
   file_url: string | null
 }
+
+export type Expenses = Models.Row & {
+  date: string
+  supplier_id: string | null
+  description: string
+  category: string
+  amount: number
+  vat_rate: number | null
+  vat_amount: number | null
+  total: number
+  receipt_url: string | null
+  notes: string | null
+}
