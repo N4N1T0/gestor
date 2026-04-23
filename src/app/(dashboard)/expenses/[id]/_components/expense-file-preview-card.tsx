@@ -229,7 +229,8 @@ export default function ExpenseFilePreviewCard({
                 state.isDownloading,
                 filePreviewUrl,
                 setIsDownloading,
-                setHasError
+                setHasError,
+                "gastos-adjunta"
               )
             }
             disabled={state.isDownloading}

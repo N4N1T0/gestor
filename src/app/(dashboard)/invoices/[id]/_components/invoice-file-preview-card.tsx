@@ -229,7 +229,8 @@ export default function InvoiceFilePreviewCard({
                 state.isDownloading,
                 filePreviewUrl,
                 setIsDownloading,
-                setHasError
+                setHasError,
+                "factura-adjunta"
               )
             }
             disabled={state.isDownloading}
