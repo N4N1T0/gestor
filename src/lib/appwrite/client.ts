@@ -19,11 +19,13 @@ export const uploadFile = async (file: File | null) => {
   return response.$id
 }
 
-export const getFilePreviewUrl = (fileId: string) => {
-  const result = storage.getFileView({
+export const getStorageFileViewUrl = (fileId: string) => {
+  return storage.getFileView({
     bucketId: process.env.NEXT_PUBLIC_BUCKET_ID!,
-    fileId: fileId,
+    fileId,
   })
+}
 
-  return result
+export const getFilePreviewUrl = (fileId: string) => {
+  return getStorageFileViewUrl(fileId)
 }

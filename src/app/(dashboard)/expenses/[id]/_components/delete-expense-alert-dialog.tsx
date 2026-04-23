@@ -18,55 +18,55 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { tanstackKeys } from "@/features/tanstack/keys"
-import { Invoices } from "@/types/appwrite"
+import { Expenses } from "@/types/appwrite"
 import { useQueryClient } from "@tanstack/react-query"
 import { Trash2Icon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
-import { deleteInvoice } from "../_actions"
+import { deleteExpense } from "../_actions"
 
-interface DeleteInvoiceAlertDialogProps {
-  invoice: Invoices
+interface DeleteExpenseAlertDialogProps {
+  expense: Expenses
   isOpen: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export default function DeleteInvoiceAlertDialog({
-  invoice,
+export default function DeleteExpenseAlertDialog({
+  expense,
   isOpen,
   onOpenChange,
-}: DeleteInvoiceAlertDialogProps) {
-  const [confirmationName, setConfirmationName] = useState("")
+}: DeleteExpenseAlertDialogProps) {
+  const [confirmationId, setConfirmationId] = useState("")
   const queryClient = useQueryClient()
   const router = useRouter()
 
   const { execute: executeDelete, isExecuting: isDeleting } = useAction(
-    deleteInvoice,
+    deleteExpense,
     {
       onSuccess: ({ data }) => {
         if (!data?.success) {
-          toast.error("No se pudo eliminar la factura")
+          toast.error("No se pudo eliminar el gasto")
           return
         }
 
-        toast.success("Factura eliminada correctamente")
+        toast.success("Gasto eliminado correctamente")
         onOpenChange(false)
-        setConfirmationName("")
-        queryClient.invalidateQueries({ queryKey: tanstackKeys.invoices })
+        setConfirmationId("")
+        queryClient.invalidateQueries({ queryKey: tanstackKeys.expenses })
         queryClient.invalidateQueries({
-          queryKey: tanstackKeys.invoice(invoice.$id),
+          queryKey: tanstackKeys.expense(expense.$id),
         })
         router.push("/dashboard")
       },
       onError: ({ error }) => {
-        toast.error(error.serverError ?? "No se pudo eliminar la factura")
+        toast.error(error.serverError ?? "No se pudo eliminar el gasto")
       },
     }
   )
 
-  const isConfirmationValid = confirmationName === invoice.invoice_number
+  const isConfirmationValid = confirmationId === expense.$id
 
   return (
     <AlertDialog
@@ -74,7 +74,7 @@ export default function DeleteInvoiceAlertDialog({
       onOpenChange={(open) => {
         onOpenChange(open)
         if (!open) {
-          setConfirmationName("")
+          setConfirmationId("")
         }
       }}
     >
@@ -83,29 +83,29 @@ export default function DeleteInvoiceAlertDialog({
           <Button
             variant="destructive"
             size="icon"
-            aria-label="Eliminar factura"
+            aria-label="Eliminar gasto"
             onClick={() => onOpenChange(true)}
           >
             <Trash2Icon className="h-4 w-4" />
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="top">Eliminar factura</TooltipContent>
+        <TooltipContent side="top">Eliminar gasto</TooltipContent>
       </Tooltip>
 
       <AlertDialogContent size="sm">
         <AlertDialogHeader>
-          <AlertDialogTitle>Eliminar factura</AlertDialogTitle>
+          <AlertDialogTitle>Eliminar gasto</AlertDialogTitle>
           <AlertDialogDescription>
-            Esta acción no se puede deshacer. Para confirmar, escribe el número
-            de factura <strong>{invoice.invoice_number}</strong>.
+            Esta acción no se puede deshacer. Para confirmar, escribe el ID del
+            gasto <strong>{expense.$id}</strong>.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         <Input
-          value={confirmationName}
-          onChange={(event) => setConfirmationName(event.target.value)}
-          placeholder={invoice.invoice_number}
-          aria-label="Confirmación de número de factura"
+          value={confirmationId}
+          onChange={(event) => setConfirmationId(event.target.value)}
+          placeholder={expense.$id}
+          aria-label="Confirmación de ID de gasto"
           disabled={isDeleting}
         />
 
@@ -122,9 +122,8 @@ export default function DeleteInvoiceAlertDialog({
               }
 
               executeDelete({
-                id: invoice.$id,
-                invoice_number: invoice.invoice_number,
-                confirmation_name: confirmationName,
+                id: expense.$id,
+                confirmation_id: confirmationId,
               })
             }}
           >
